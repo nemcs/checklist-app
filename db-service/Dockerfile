@@ -12,4 +12,8 @@ COPY . ./
 
 RUN go build -o db-service
 
-CMD ["./db-service"]
+FROM alpine AS runner
+
+COPY --from=builder /app/db-service /
+
+CMD ["/db-service"]

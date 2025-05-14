@@ -13,5 +13,8 @@ COPY . ./
 
 RUN go build -o api-service
 
-CMD ["./api-service"]
+FROM alpine AS runner
 
+COPY --from=builder /app/api-service /
+
+CMD ["/api-service"]

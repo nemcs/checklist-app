@@ -12,4 +12,8 @@ COPY . ./
 
 RUN go build -o kafka-service
 
-CMD ["./kafka-service"]
+FROM alpine AS runner
+
+COPY --from=builder /app/kafka-service /
+
+CMD ["/kafka-service"]
