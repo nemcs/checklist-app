@@ -11,10 +11,10 @@ RUN go mod download
 
 COPY . ./
 
-RUN go build -o api-services
+RUN go build -o api-service ./cmd
 
 FROM alpine AS runner
 
-COPY --from=builder /app/api-service /
+COPY --from=builder /app/api-service/ /api-service
 
 CMD ["/api-service"]

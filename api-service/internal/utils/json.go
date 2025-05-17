@@ -4,16 +4,17 @@ package utils
 import (
 	"encoding/json"
 	"github.com/nemcs/checklist-app/api-service/internal/models"
+	"log"
 	"net/http"
 )
 
-func SendJSON(w http.ResponseWriter, status int, task models.Task) {
-	resp := map[string]string{"id": task.ID, "message": "created"}
+//TODO норм ли юзать any?
+func SendJSON(w http.ResponseWriter, status int, data any) {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(status)
-	err := json.NewEncoder(w).Encode(resp)
-	if err != nil {
-		return
+	if err := json.NewEncoder(w).Encode(data); err != nil {
+		log.Printf("SendJSON error: %v", err)
+		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
 	}
 }
 
