@@ -1,8 +1,6 @@
-package model
+package models
 
-//├── model/                  # структуры данных
-//│   └── task.go             # Task, CreateTaskRequest, и т.д.
-
+// структуры данных (Task, AddTaskRequest)
 type Task struct {
 	ID          string `json:"id"`
 	Title       string `json:"title"`

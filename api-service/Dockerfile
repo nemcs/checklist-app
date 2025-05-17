@@ -11,7 +11,7 @@ RUN go mod download
 
 COPY . ./
 
-RUN go build -o api-service
+RUN go build -o api-services
 
 FROM alpine AS runner
 
