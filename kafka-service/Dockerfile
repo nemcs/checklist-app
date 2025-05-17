@@ -10,7 +10,7 @@ RUN go mod download
 
 COPY . ./
 
-RUN go build -o kafka-service
+RUN go build -o kafka-services
 
 FROM alpine AS runner
 

@@ -10,7 +10,7 @@ RUN go mod download
 
 COPY . ./
 
-RUN go build -o db-service
+RUN go build -o db-services
 
 FROM alpine AS runner
 
