@@ -1,6 +1,6 @@
 package main
 
-//├── main.go                 # только запуск сервера и роутинг
+// только запуск сервера и роутинг
 
 import (
 	"github.com/julienschmidt/httprouter"
