@@ -1,7 +1,5 @@
 package main
 
-// только запуск сервера и роутинг
-
 import (
 	"github.com/julienschmidt/httprouter"
 	"github.com/nemcs/checklist-app/api-service/internal/handlers"

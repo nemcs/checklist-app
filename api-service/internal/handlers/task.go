@@ -1,6 +1,5 @@
 package handlers
 
-// HTTP-обработчики
 import (
 	"github.com/julienschmidt/httprouter"
 	"github.com/nemcs/checklist-app/api-service/internal/models"
