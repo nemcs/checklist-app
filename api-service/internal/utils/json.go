@@ -1,6 +1,5 @@
 package utils
 
-// хелперы (парсинг, генерация ID, etc)
 import (
 	"encoding/json"
 	"github.com/nemcs/checklist-app/api-service/internal/models"

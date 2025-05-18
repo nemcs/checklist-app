@@ -1,6 +1,5 @@
 package services
 
-// бизнес-логика (addTask, getTasks)
 import (
 	"errors"
 	"github.com/google/uuid"
