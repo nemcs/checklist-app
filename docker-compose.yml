@@ -2,9 +2,10 @@ version: "3.8"
 
 services:
   api-service:
+    container_name: api-service
     build:
-      context: .
+      context: ./api-service
       dockerfile: Dockerfile
     ports:
       - "9090:9090"
-    container_name: checklist-api
+    restart: unless-stopped
