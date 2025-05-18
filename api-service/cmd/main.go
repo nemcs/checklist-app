@@ -13,8 +13,8 @@ func main() {
 	router := httprouter.New()
 	router.POST("/create", handlers.CreateTask)
 	router.GET("/list", handlers.ListTasks)
-	// router.DELETE("/delete/:id", handlers.DeleteTask)
-	// router.PUT("/done/:id", handlers.MarkDone)
+	router.DELETE("/delete/:id", handlers.DeleteTask)
+	router.PUT("/done/:id", handlers.MarkDone)
 	log.Fatal(http.ListenAndServe(":9090", router))
 
 }

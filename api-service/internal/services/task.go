@@ -2,9 +2,12 @@ package services
 
 // бизнес-логика (addTask, getTasks)
 import (
+	"errors"
 	"github.com/google/uuid"
 	"github.com/nemcs/checklist-app/api-service/internal/models"
 )
+
+var ErrTaskNotFound = errors.New("Задача не найдена")
 
 var storage = make(map[string]models.Task)
 
@@ -26,4 +29,30 @@ func GetAllTasks() []models.Task {
 		tasks = append(tasks, v)
 	}
 	return tasks
+}
+
+func DeleteTask(id string) error {
+	_, found := getTask(id)
+	if !found {
+		return ErrTaskNotFound
+	}
+	delete(storage, id)
+	return nil
+}
+
+func ChangeStatusDone(id string) error {
+	_, found := getTask(id)
+	if !found {
+		return ErrTaskNotFound
+	}
+	task := storage[id]
+	task.Done = true
+	storage[id] = task
+	return nil
+}
+
+func getTask(id string) (models.Task, bool) {
+	task, found := storage[id]
+	return task, found
+
 }

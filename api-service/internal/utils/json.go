@@ -8,7 +8,7 @@ import (
 	"net/http"
 )
 
-//TODO норм ли юзать any?
+// TODO норм ли юзать any?
 func SendJSON(w http.ResponseWriter, status int, data any) {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(status)
