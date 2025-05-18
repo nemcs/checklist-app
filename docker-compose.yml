@@ -1,0 +1,10 @@
+version: "3.8"
+
+services:
+  api-service:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "9090:9090"
+    container_name: checklist-api
