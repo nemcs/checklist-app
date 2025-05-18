@@ -3,5 +3,5 @@ package main
 import "fmt"
 
 func main() {
-	fmt.Println("kafka-service running")
+	fmt.Println("kafka-services running")
 }
