@@ -7,5 +7,26 @@ services:
       context: ./api-service
       dockerfile: Dockerfile
     ports:
-      - "9090:9090"
+      - "127.0.0.1:9090:9090"
     restart: unless-stopped
+    depends_on:
+      - postgresql
+    networks:
+      - cl
+
+  postgresql:
+    container_name: db-service
+    image: postgres:17.4-alpine
+    ports:
+      - "25432:5432"
+    environment:
+          - POSTGRES_DB=tasks
+          - POSTGRES_USER=postgres
+          - POSTGRES_PASSWORD=Fergio21
+    volumes:
+      - ./data:/var/lib/postgresql/data
+    networks:
+      - cl
+
+networks:
+  cl:
