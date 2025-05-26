@@ -3,12 +3,11 @@ package config
 import "os"
 
 const (
-	DBHost        = "DBHost"
-	DBPort        = "DBPort"
-	DBUser        = "DBUser"
-	DBPass        = "DBPass"
-	DBName        = "DBName"
-	DefaultEnvVal = ""
+	DBHost = "POSTGRES_HOST"
+	DBPort = "POSTGRES_PORT"
+	DBUser = "POSTGRES_USER"
+	DBPass = "POSTGRES_PASSWORD"
+	DBName = "POSTGRES_DB"
 )
 
 type PostgresConfig struct {
@@ -26,11 +25,11 @@ type Config struct {
 func New() *Config {
 	return &Config{
 		PostgresConfig{
-			DBHost: getEnv(DBHost, DefaultEnvVal),
-			DBPort: getEnv(DBPort, DefaultEnvVal),
-			DBUser: getEnv(DBUser, DefaultEnvVal),
-			DBPass: getEnv(DBPass, DefaultEnvVal),
-			DBName: getEnv(DBName, DefaultEnvVal),
+			DBHost: getEnv(DBHost, "postgresql"),
+			DBPort: getEnv(DBPort, "5432"),
+			DBUser: getEnv(DBUser, "postgres"),
+			DBPass: getEnv(DBPass, "postgres"),
+			DBName: getEnv(DBName, "checklist_app"),
 		},
 	}
 }
