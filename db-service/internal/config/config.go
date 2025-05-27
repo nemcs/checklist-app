@@ -3,18 +3,18 @@ package config
 import "os"
 
 const (
-	DBHost = "POSTGRES_HOST"
-	DBPort = "POSTGRES_PORT"
-	DBUser = "POSTGRES_USER"
-	DBPass = "POSTGRES_PASSWORD"
+	Host   = "POSTGRES_HOST"
+	Port   = "POSTGRES_PORT"
+	User   = "POSTGRES_USER"
+	Pass   = "POSTGRES_PASSWORD"
 	DBName = "POSTGRES_DB"
 )
 
 type PostgresConfig struct {
-	DBHost string
-	DBPort string
-	DBUser string
-	DBPass string
+	Host   string
+	Port   string
+	User   string
+	Pass   string
 	DBName string
 }
 
@@ -25,18 +25,18 @@ type Config struct {
 func New() *Config {
 	return &Config{
 		PostgresConfig{
-			DBHost: getEnv(DBHost, "postgresql"),
-			DBPort: getEnv(DBPort, "5432"),
-			DBUser: getEnv(DBUser, "postgres"),
-			DBPass: getEnv(DBPass, "postgres"),
+			Host:   getEnv(Host, "localhost"),
+			Port:   getEnv(Port, "5432"),
+			User:   getEnv(User, "postgres"),
+			Pass:   getEnv(Pass, "Fergio21"),
 			DBName: getEnv(DBName, "checklist_app"),
 		},
 	}
 }
 
-func getEnv(key string, defaultVal string) string {
-	if value, exists := os.LookupEnv(key); exists {
+func getEnv(key string, defaultValue string) string {
+	if value, ok := os.LookupEnv(key); ok {
 		return value
 	}
-	return defaultVal
+	return defaultValue
 }

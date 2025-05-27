@@ -7,23 +7,30 @@ import (
 	"github.com/nemcs/checklist-app/db-service/internal/models"
 )
 
-type TaskRepository struct {
+type ChecklistRepo struct {
 	pool *pgxpool.Pool
 }
 
-func NewTaskRepository(dbpool *pgxpool.Pool) *TaskRepository {
-	return &TaskRepository{pool: dbpool}
+func New(dbpool *pgxpool.Pool) *ChecklistRepo {
+	return &ChecklistRepo{pool: dbpool}
 }
 
-func (r *TaskRepository) NewTask(ctx context.Context, task models.Task) error {
-	query := `insert into checklist (id, title, description, done, created_at) values ($1, $2, $3, $4, $5)`
-	_, err := r.pool.Exec(ctx, query, task.ID, task.Title, task.Description, task.Done, task.CreatedAt)
-	return err
+func (r *ChecklistRepo) NewTask(ctx context.Context, task models.Task) error {
+	query := "insert into checklist (id, title, description) values ($1, $2, $3)"
+	commandTag, err := r.pool.Exec(ctx, query, task.ID, task.Title, task.Description)
+	if err != nil {
+		return err
+	}
+	if commandTag.RowsAffected() == 0 {
+		return fmt.Errorf("Задача не создана")
+	}
+	return nil
 }
 
-func (r *TaskRepository) GetTaskByID(ctx context.Context, id string) (models.Task, error) {
+func (r *ChecklistRepo) GetTaskByID(ctx context.Context, id string) (models.Task, error) {
 	var task models.Task
-	if err := r.pool.QueryRow(ctx, "select id, title, description, done, created_at from checklist where id = $1", id).Scan(
+	query := "select id, title, description, done, created_at from checklist where id = $1"
+	if err := r.pool.QueryRow(ctx, query, id).Scan(
 		&task.ID,
 		&task.Title,
 		&task.Description,
@@ -35,10 +42,10 @@ func (r *TaskRepository) GetTaskByID(ctx context.Context, id string) (models.Tas
 	return task, nil
 }
 
-func (r *TaskRepository) GetAllTask(ctx context.Context) ([]models.Task, error) {
+func (r *ChecklistRepo) GetAllTask(ctx context.Context) ([]models.Task, error) {
 	var tasks []models.Task
-
-	rows, err := r.pool.Query(ctx, "select id, title, description, done, created_at from checklist")
+	query := "select id, title, description, done, created_at from checklist"
+	rows, err := r.pool.Query(ctx, query)
 	defer rows.Close()
 
 	for rows.Next() {
@@ -57,8 +64,9 @@ func (r *TaskRepository) GetAllTask(ctx context.Context) ([]models.Task, error) 
 	return tasks, nil
 }
 
-func (r *TaskRepository) UpdateDoneByID(ctx context.Context, id string) error {
-	commandTag, err := r.pool.Exec(ctx, "update checklist set done = true where id = $1", id)
+func (r *ChecklistRepo) UpdateDoneByID(ctx context.Context, id string) error {
+	query := "update checklist set done = true where id = $1"
+	commandTag, err := r.pool.Exec(ctx, query, id)
 	if err != nil {
 		return err
 	}
@@ -68,8 +76,9 @@ func (r *TaskRepository) UpdateDoneByID(ctx context.Context, id string) error {
 	return nil
 }
 
-func (r *TaskRepository) DeleteTaskByID(ctx context.Context, id string) error {
-	commandTag, err := r.pool.Exec(ctx, "delete from checklist where id = $1", id)
+func (r *ChecklistRepo) DeleteTaskByID(ctx context.Context, id string) error {
+	query := "delete from checklist where id = $1"
+	commandTag, err := r.pool.Exec(ctx, query, id)
 	if err != nil {
 		return err
 	}
