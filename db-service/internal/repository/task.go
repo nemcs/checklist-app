@@ -71,7 +71,7 @@ func (r *ChecklistRepo) UpdateDoneByID(ctx context.Context, id string) error {
 		return err
 	}
 	if commandTag.RowsAffected() == 0 {
-		return fmt.Errorf("Задача с %s не найдена", id)
+		return fmt.Errorf("Задача %s не найдена", id)
 	}
 	return nil
 }
