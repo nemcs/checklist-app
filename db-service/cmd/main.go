@@ -22,7 +22,7 @@ func main() {
 
 	conf := config.New()
 
-	conn, err := repository.NewPostgres(config.PostgresConfig{
+	dbpool, err := repository.NewPostgres(config.PostgresConfig{
 		DBHost: conf.DBHost,
 		DBPort: conf.DBPort,
 		DBUser: conf.DBUser,
@@ -32,11 +32,11 @@ func main() {
 	if err != nil {
 		log.Fatal("Failed to connect to the database", err)
 	}
-	defer conn.Close(context.Background())
+	defer dbpool.Close()
 	fmt.Printf("DB connected: host=%s db=%s\n", conf.DBHost, conf.DBName)
 
 	//Создание таблицы, если она еще не создана
-	_, err = conn.Exec(context.Background(), `CREATE TABLE IF NOT EXISTS checklist (
+	_, err = dbpool.Exec(context.Background(), `CREATE TABLE IF NOT EXISTS checklist (
 	   id UUID PRIMARY KEY,
 	   title TEXT NOT NULL,
 	   description TEXT,
@@ -48,7 +48,7 @@ func main() {
 		return
 	}
 
-	repo := repository.NewTaskRepository(conn)
+	repo := repository.NewTaskRepository(dbpool)
 	//Добавляем новую таску
 	task := models.Task{
 		ID:          uuid.New().String(),
