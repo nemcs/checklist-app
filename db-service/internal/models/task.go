@@ -10,28 +10,32 @@ type Task struct {
 	CreatedAt   time.Time `json:"created_at"`
 }
 
-type NewTaskToDB struct {
-	ID          string `json:"id"`
+type ID struct {
+	ID string `json:"id"`
+}
+
+type CreateTaskRequest struct {
 	Title       string `json:"title"`
 	Description string `json:"description"`
 }
 
-type NewTaskRequest struct {
-	Title       string `json:"title"`
-	Description string `json:"description,omitempty"`
+type UpdateTaskRequest struct {
 }
 
-type TasksListResponse struct {
-	Data []Task `json:"data"`
-}
-type TasksSingleResponse struct {
-	Data Task `json:"data"`
+type MarkDoneRequest struct {
 }
 
+type DeleteTaskRequest struct {
+}
+
+type DataResponse struct {
+	Data any `json:"data,omitempty"`
+}
 type MessageResponse struct {
 	Message string `json:"message"`
 }
 
-type ID struct {
-	ID string `json:"id"`
+type APIResponse struct {
+	Message *MessageResponse
+	Data    *DataResponse
 }

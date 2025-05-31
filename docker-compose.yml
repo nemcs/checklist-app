@@ -1,4 +1,4 @@
-version: "3.8"
+
 
 services:
   api-service:
@@ -7,5 +7,45 @@ services:
       context: ./api-service
       dockerfile: Dockerfile
     ports:
-      - "9090:9090"
+      - "127.0.0.1:9090:9090"
     restart: unless-stopped
+    depends_on:
+      - db-service
+    networks:
+      - cl
+
+  db-service:
+    container_name: db-service
+    build:
+      context: ./db-service
+      dockerfile: Dockerfile
+    ports:
+      - "25432:25432"
+    restart: unless-stopped
+    environment:
+      - DB_HOST=postgresql
+      - DB_PORT=5432
+      - DB_USER=postgres
+      - DB_PASSWORD=postgres
+      - DB_NAME=checklist_app
+    depends_on:
+      - postgresql
+    networks:
+      - cl
+
+  postgresql:
+    container_name: postgresql
+    image: postgres:17.4-alpine
+    ports:
+      - "5432:5432"
+    environment:
+          - POSTGRES_DB=checklist_app
+          - POSTGRES_USER=postgres
+          - POSTGRES_PASSWORD=postgres
+    volumes:
+      - ./data:/var/lib/postgresql/data
+    networks:
+      - cl
+
+networks:
+  cl:

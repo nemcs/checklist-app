@@ -10,10 +10,10 @@ RUN go mod download
 
 COPY . ./
 
-RUN go build -o db-services
+RUN go build -o db-service ./cmd
 
 FROM alpine AS runner
 
-COPY --from=builder /app/db-service /
+COPY --from=builder /app/db-service/ /db-service
 
 CMD ["/db-service"]
