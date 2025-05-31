@@ -25,10 +25,10 @@ type Config struct {
 func New() *Config {
 	return &Config{
 		PostgresConfig{
-			Host:   getEnv(Host, "localhost"),
+			Host:   getEnv(Host, "postgresql"),
 			Port:   getEnv(Port, "5432"),
 			User:   getEnv(User, "postgres"),
-			Pass:   getEnv(Pass, "Fergio21"),
+			Pass:   getEnv(Pass, "postgres"),
 			DBName: getEnv(DBName, "checklist_app"),
 		},
 	}

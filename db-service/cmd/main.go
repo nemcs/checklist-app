@@ -2,14 +2,14 @@ package main
 
 import (
 	"context"
-	"fmt"
-	"github.com/google/uuid"
 	"github.com/joho/godotenv"
+	"github.com/julienschmidt/httprouter"
 	"github.com/nemcs/checklist-app/db-service/internal/config"
 	"github.com/nemcs/checklist-app/db-service/internal/db"
-	"github.com/nemcs/checklist-app/db-service/internal/models"
+	"github.com/nemcs/checklist-app/db-service/internal/handler"
 	"github.com/nemcs/checklist-app/db-service/internal/repository"
 	"log"
+	"net/http"
 )
 
 func init() {
@@ -19,19 +19,29 @@ func init() {
 }
 
 func main() {
-	fmt.Println("db-services running")
-
 	cfg := config.New()
-
 	dbpool, err := db.NewPool(cfg.PostgresConfig)
+	if err != nil {
+		log.Fatal("Ошибка подключения к БД ", err)
+	}
+	log.Printf("БД подключена: host=%s db=%s\n", cfg.Host, cfg.DBName)
 	defer dbpool.Close()
 
-	if err != nil {
-		log.Fatal("Failed to connect to the database ", err)
-	}
-	fmt.Printf("DB connected: host=%s db=%s\n", cfg.Host, cfg.DBName)
+	log.Println("db-services running")
+
+	repo := repository.New(dbpool)
+	h := handler.New(repo)
+	router := httprouter.New()
+	router.GET("/tasks", h.GetAllTask)
+	router.POST("/task", h.GetTaskByID)
+	router.PATCH("/task/done", h.UpdateDoneByID)
+	router.DELETE("/task/delete", h.DeleteTaskByID)
+	router.POST("/task/create", h.NewTask)
+
+	log.Fatal(http.ListenAndServe(":25432", router))
 
 	//Создание таблицы, если она еще не создана
+	// TODO вынести в миграции
 	_, err = dbpool.Exec(context.Background(), `CREATE TABLE IF NOT EXISTS checklist (
 	   id UUID PRIMARY KEY,
 	   title TEXT NOT NULL,
@@ -44,53 +54,4 @@ func main() {
 		return
 	}
 
-	repo := repository.New(dbpool)
-	//Добавляем новую таску
-	task := models.Task{
-		ID:          uuid.New().String(),
-		Title:       "TEST19:35",
-		Description: "TEST19:35",
-	}
-	err = repo.NewTask(context.Background(), task)
-	if err != nil {
-		log.Fatal("[NewTask] Ошибка при добавлении задачи: ", err)
-	}
-
-	//Получаем одну таску по ID
-	res, err := repo.GetTaskByID(context.Background(), "8a4deae0-19e7-4033-be37-fe51a4d55460")
-	if err != nil {
-		log.Fatal("[GetTaskByID] Ошибка при получении задачи: ", err)
-		return
-	}
-	fmt.Printf("ID: %v, Title: %s, Description: %s, Done: %v, CreatedAt: %v\n", res.ID, res.Title, res.Description, res.Done, res.CreatedAt)
-
-	//Получаем все таски
-	resAll, err := repo.GetAllTask(context.Background())
-	if err != nil {
-		log.Fatal("[GetAllTask] Ошибка при получении списка задач: ", err)
-		return
-	}
-	for _, task := range resAll {
-		fmt.Printf("ID: %v, Title: %s, Description: %s, Done: %v, CreatedAt: %v\n", task.ID, task.Title, task.Description, task.Done, task.CreatedAt)
-	}
-
-	//Обновляем статус done на true
-	var testIDforUpdate = "010c13b6-d13c-4d03-bf5c-e7543bf5cb1d"
-	if err = repo.UpdateDoneByID(context.Background(), testIDforUpdate); err != nil {
-		log.Fatal("[UpdateDoneByID] Ошибка при обновлении статуса Done: ", err)
-		return
-	}
-	//Получаем одну таску по ID
-	res2, err := repo.GetTaskByID(context.Background(), testIDforUpdate)
-	if err != nil {
-		log.Fatal("[GetTaskByID] Ошибка при получении задачи: ", err)
-		return
-	}
-	fmt.Printf("ID: %v, Title: %s, Description: %s, Done: %v, CreatedAt: %v\n", res2.ID, res2.Title, res2.Description, res2.Done, res2.CreatedAt)
-
-	//Удаляем задачу по айди
-	if err = repo.DeleteTaskByID(context.Background(), "c5405ecc-bd13-44ae-b215-daca9b62ee84"); err != nil {
-		log.Fatal("[DeleteTaskByID] Ошибка при удалении задачи: ", err)
-		return
-	}
 }

@@ -8,11 +8,14 @@ import (
 )
 
 func NewPool(cfg config.PostgresConfig) (*pgxpool.Pool, error) {
-	dsn := fmt.Sprintf("postgres://%s:%s@%s:%s/%s", cfg.User, cfg.Pass, cfg.Host, cfg.Port, cfg.DBName)
+	dsn := fmt.Sprintf("postgres://%s:%s@%s:%s/%s?sslmode=disable", cfg.User, cfg.Pass, cfg.Host, cfg.Port, cfg.DBName)
 
 	pool, err := pgxpool.New(context.Background(), dsn)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("при создании пула: %v", err)
+	}
+	if err = pool.Ping(context.Background()); err != nil {
+		return nil, fmt.Errorf("при проверке пинга: %v", err)
 	}
 	return pool, nil
 }
